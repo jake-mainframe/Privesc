@@ -8,8 +8,10 @@ These techniques have been around for a while, I just stringed some code togethe
 This tool will check access to BPX.FILEATTR.APF. This allows you to create APF authorised programs in USS. It will spawn a ACEE Special bit shell.
 
 ### Usage
+```
 ./UELF.APF will create a exec called aceesh
-./UELF.APF testshell will create a exec all testshell
+./UELF.APF testshell will create a exec called testshell
+```
 
 ## ELV.APF    
 ### Description
