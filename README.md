@@ -3,6 +3,14 @@
 Some scripts to quickly escalate on z/OS given certain misconfigurations.  
 These techniques have been around for a while, I just stringed some code together to have something easy to use in a pentest.
 
+## UELV.APF    
+### Description
+This tool will check access to BPX.FILEATTR.APF. This allows you to create APF authorised programs in USS. It will spawn a ACEE Special bit shell.
+
+### Usage
+./UELF.APF will create a exec called aceesh
+./UELF.APF testshell will create a exec all testshell
+
 ## ELV.APF    
 ### Description
 This tool will list APF authorized libraries by browsing control blocks in memory. For each library it returns the access right of the current user.  
