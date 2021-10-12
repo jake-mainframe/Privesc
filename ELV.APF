@@ -180,6 +180,7 @@ list_apf:
                /* It must be christmas!! */
                PRIV.NUMAPF = "ALTER"
            end
+         end
          if verbose then
             say "+" DSN.NUMAPF "-->" PRIV.NUMAPF
          else if PRIV.NUMAPF == 'ALTER' then
