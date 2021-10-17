@@ -6,8 +6,6 @@ W = OUTTRAP('OFF')
 
 if POS(ICH31005I,APFFILE.1) /= 0 then do
   say "You dont have read on BPX.FILEATTR.APF"
-  say "Ending"
-  exit(0)
 end
 
 say "You have read on BPX.FILEATTR.APF"
